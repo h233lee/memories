@@ -6,11 +6,13 @@ import {
   updatePost,
   deletePost,
   likePost,
+  // getPost,
 } from '../controllers/posts.js';
 
 const router = express.Router();
 
 router.get('/', getPosts);
+// router.get('/:id', getPost);
 router.post('/', createPost);
 router.patch('/:id', updatePost);
 router.delete('/:id', deletePost);

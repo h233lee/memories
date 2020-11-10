@@ -11,15 +11,14 @@ import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
-import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
 import useStyles from './style';
 import { deletePost, likePost } from '../../../actions/posts';
 import defaultImage from '../../../images/memories.png';
 
-const Post = ({ post, setCurrentId }) => {
+const Post = ({ post, setCurrentId, deletePost, likePost }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   return (
     <Card className={classes.card}>
@@ -63,7 +62,7 @@ const Post = ({ post, setCurrentId }) => {
           size="small"
           color="primary"
           onClick={() => {
-            dispatch(likePost(post._id));
+            likePost(post._id);
           }}
         >
           <ThumbUpAltIcon fontSize="small" />
@@ -73,7 +72,7 @@ const Post = ({ post, setCurrentId }) => {
         <Button
           size="small"
           color="primary"
-          onClick={() => dispatch(deletePost(post._id))}
+          onClick={() => deletePost(post._id)}
         >
           <DeleteIcon fontSize="small" />
           Delete
@@ -83,4 +82,4 @@ const Post = ({ post, setCurrentId }) => {
   );
 };
 
-export default Post;
+export default connect(null, { deletePost, likePost })(Post);
