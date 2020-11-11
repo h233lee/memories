@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import posts from './routes/posts.js';
+import user from './routes/user.js';
 
 const app = express();
 dotenv.config();
@@ -14,6 +15,7 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }));
 app.use(cors());
 
 app.use('/posts', posts);
+app.use('/user', user);
 
 const CONNECTION_URL = process.env.CONNECTION_URL;
 const PORT = process.env.PORT || 5000;
@@ -22,6 +24,7 @@ mongoose
   .connect(CONNECTION_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
   })
   .then(() =>
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
