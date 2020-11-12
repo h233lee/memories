@@ -1,12 +1,33 @@
 import User from '../models/User.js';
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 export const createUser = async (req, res) => {
-  const user = req.body;
-  const newUser = new User(user);
+  const { name, email, password } = req.body;
+
   try {
-    await newUser.save();
-    res.status(201).json(newUser);
+    // check if user already exists
+    let user = await User.findOne({
+      email,
+    });
+
+    if (user) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    user = new User({
+      name,
+      email,
+      password,
+    });
+
+    // Encrypt password
+    const salt = await bcrypt.genSalt(10);
+
+    user.password = await bcrypt.hash(password, salt);
+
+    await user.save();
+    res.status(201).json(user);
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
@@ -41,6 +62,9 @@ export const updateUser = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send('No user with that ID');
   }
+
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
 
   const updatedPost = await User.findByIdAndUpdate(
     id,

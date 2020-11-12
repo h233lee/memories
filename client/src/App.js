@@ -1,54 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { Container, AppBar, Typography, Grow, Grid } from '@material-ui/core';
-import { connect } from 'react-redux';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import { getPosts } from './actions/posts';
-import Posts from './components/Posts/Posts';
-import Form from './components/Form/Form';
-import memories from './images/memories.png';
-import useStyles from './styles';
+import MainPage from './components/Pages/MainPage';
+import LoginPage from './components/Pages/LoginPage';
+import SignUpPage from './components/Pages/SignUpPage';
 
-const App = ({ getPosts }) => {
-  const [currentId, setCurrentId] = useState(null);
-  const classes = useStyles();
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { Provider } from 'react-redux';
+import reducers from './reducers';
+import thunk from 'redux-thunk';
 
-  useEffect(() => {
-    getPosts();
-  }, [currentId, getPosts]);
+const App = () => {
+  const store = createStore(
+    reducers,
+    composeWithDevTools(compose(applyMiddleware(thunk)))
+  );
 
   return (
-    <Container maxidth="lg">
-      <AppBar className={classes.appBar} position="static" color="inherit">
-        <Typography className={classes.heading} variant="h2" align="center">
-          Memories
-        </Typography>
-        <img
-          className={classes.image}
-          src={memories}
-          alt="memories"
-          height="60"
-        />
-      </AppBar>
-      <Grow in>
-        <Container>
-          <Grid
-            className={classes.mainContainer}
-            container
-            justify="space-between"
-            alignItems="stretch"
-            spacing={3}
-          >
-            <Grid item xs={12} sm={7}>
-              <Posts setCurrentId={setCurrentId} />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Form currentId={currentId} setCurrentId={setCurrentId} />
-            </Grid>
-          </Grid>
-        </Container>
-      </Grow>
-    </Container>
+    <Provider store={store}>
+      <Router>
+        <Switch>
+          <Route exact path="/" component={LoginPage} />
+          <Route exact path="/posts" component={MainPage} />
+          <Route exact path="/SignUpPage" component={SignUpPage} />
+        </Switch>
+      </Router>
+    </Provider>
   );
 };
 
-export default connect(null, { getPosts })(App);
+export default App;
