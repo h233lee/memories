@@ -1,14 +1,13 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Grid, CircularProgress } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 
 import Post from './Post/Post';
 
 import useStyles from './styles';
 
-const Posts = ({ setCurrentId }) => {
+const Posts = ({ setCurrentId, posts }) => {
   const classes = useStyles();
-  const posts = useSelector((state) => state.posts);
 
   return !posts ? (
     <CircularProgress />
@@ -27,4 +26,9 @@ const Posts = ({ setCurrentId }) => {
     </Grid>
   );
 };
-export default Posts;
+
+const mapStateToProps = (state) => ({
+  posts: state.posts,
+});
+
+export default connect(mapStateToProps, null)(Posts);

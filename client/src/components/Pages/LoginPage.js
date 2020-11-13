@@ -1,5 +1,7 @@
 // https://github.com/mui-org/material-ui/blob/master/docs/src/pages/getting-started/templates/sign-in/SignIn.js
-import React from 'react';
+import React, { useState } from 'react';
+
+//material-ui
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -10,6 +12,10 @@ import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+
+//redux
+import { connect } from 'react-redux';
+import { loginUser } from '../../actions/user';
 
 import useStyles from './styles';
 
@@ -26,8 +32,18 @@ function Copyright() {
   );
 }
 
-const LoginPage = () => {
+const LoginPage = ({ loginUser }) => {
+  const [login, setLogin] = useState({
+    email: '',
+    password: '',
+  });
+
   const classes = useStyles();
+
+  const signIn = (e) => {
+    e.preventDefault();
+    loginUser(login.email, login.password);
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -39,7 +55,7 @@ const LoginPage = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={(e) => signIn(e)}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -51,6 +67,7 @@ const LoginPage = () => {
             autoComplete="email"
             autoFocus
             className={classes.textField}
+            onChange={(e) => setLogin({ ...login, email: e.target.value })}
           />
           <TextField
             variant="outlined"
@@ -62,6 +79,7 @@ const LoginPage = () => {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={(e) => setLogin({ ...login, password: e.target.value })}
           />
           <Button
             type="submit"
@@ -88,4 +106,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default connect(null, { loginUser })(LoginPage);

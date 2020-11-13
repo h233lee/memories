@@ -34,11 +34,24 @@ export const createUser = async (req, res) => {
 };
 
 export const getUser = async (req, res) => {
-  const { id } = req.params;
+  const { email, password } = req.body;
 
   try {
-    const user = await User.findById(id);
-    res.status(200).json(user);
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ errors: [{ message: 'Invalid Credentials' }] });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
+    }
+
+    res.json(user);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
