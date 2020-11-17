@@ -17,7 +17,7 @@ export const createUser = async (req, res) => {
 
     user = new User({
       name,
-      email,
+      email: email.toLowerCase(),
       password,
     });
 
@@ -37,7 +37,7 @@ export const getUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
       return res
